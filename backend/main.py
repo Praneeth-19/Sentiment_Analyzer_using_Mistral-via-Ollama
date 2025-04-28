@@ -4,13 +4,11 @@ import requests
 import json
 import logging
 
-# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -36,13 +34,11 @@ async def analyze_sentiment(text: str = Form(...)):
     logger.info(f"Sending request to Ollama with payload: {payload}")
     
     try:
-        # Connect to Ollama running Mistral with a longer timeout (60 seconds instead of 30)
         response = requests.post(ollama_url, json=payload, timeout=60)
         logger.info(f"Received response from Ollama with status code: {response.status_code}")
         
-        response.raise_for_status()  # Raise an exception for bad status codes
-
-        # Try to parse the JSON response from Ollama
+        response.raise_for_status()  
+        
         try:
             result = response.json()
             logger.info(f"Successfully parsed JSON response: {result}")
@@ -52,7 +48,6 @@ async def analyze_sentiment(text: str = Form(...)):
                 logger.warning(f"Ollama returned an empty response field. Full response: {result}")
                 raise HTTPException(status_code=500, detail="Ollama returned empty response")
                 
-            # Extract just the first word (Positive, Negative, or Neutral)
             sentiment = sentiment.split()[0]
             logger.info(f"Extracted sentiment: {sentiment}")
             
