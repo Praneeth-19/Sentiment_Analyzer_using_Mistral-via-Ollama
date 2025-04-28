@@ -8,7 +8,6 @@ if st.button("Analyze"):
     try:
         res = requests.post("http://localhost:8000/analyze/", data={"text": text_input})
         
-        # Check if the response status code indicates success
         if res.status_code == 200:
             try:
                 sentiment = res.json().get("sentiment", "Error")
